@@ -1,0 +1,26 @@
+# ----------------------
+# Root-level .gitignore
+# ----------------------
+
+# Backend build & Gradle
+/backend/build/
+/backend/.gradle/
+/backend/.idea/
+/backend/*.iml
+
+# Frontend node
+/frontend/node_modules/
+/frontend/build/
+/frontend/.env
+
+# OS / IDE
+.DS_Store
+.vscode/
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# Environment
+.env
