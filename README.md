@@ -1,32 +1,23 @@
 # 🤖 AI Collab
 **LLM 기반 실시간 코드 분석·리뷰 및 협업 지원 플랫폼**
 
+---
+
 ## 🧠 프로젝트 목표
-> “AI를 통한 효율적 코드 품질 관리와 협업 생산성 향상”
+“AI를 통한 효율적 코드 품질 관리와 협업 생산성 향상”
+
+> 💡 **LLM(Language Model)** 은 ChatGPT와 같은 대규모 언어 모델로,  
+> OpenAI API를 통해 코드 이해와 리뷰 피드백을 자동으로 생성합니다.  
+> AI Collab은 LLM 응답을 Kafka 이벤트로 전달하여 실시간 협업을 지원합니다.
+
 
 ---
 
 
 ## 📌 프로젝트 개요
-AI Collab은 팀 프로젝트에서 발생하는 **리뷰 병목, 반복 코멘트, 기준 불일치** 문제를 해결하기 위해 만들어진  
-**AI 기반 협업 플랫폼**입니다.  
-LLM(Language Model)을 이용해 실시간으로 코드를 분석·요약하고,  
-Kafka 기반 이벤트 스트림으로 코드 리뷰와 팀 커뮤니케이션을 연결합니다.
-
----
-
-## ⚡️ 기술 스택
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-17-blue?logo=openjdk" alt="Java"/>
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen?logo=springboot"/>
-  <img src="https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql"/>
-  <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react"/>
-  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript"/>
-  <img src="https://img.shields.io/badge/Kafka-Event%20Stream-black?logo=apachekafka"/>
-  <img src="https://img.shields.io/badge/OpenAI-Integration-orange?logo=openai"/>
-  <img src="https://img.shields.io/badge/CI/CD-GitHub%20Actions-blue?logo=githubactions"/>
-</p>
+AI Collab은 팀 프로젝트에서 발생하는 **리뷰 병목, 반복 코멘트, 기준 불일치** 문제를 해결하기 위한  
+**LLM 기반 실시간 코드 분석·협업 플랫폼**입니다.  
+Kafka 이벤트 스트림을 통해 코드 리뷰, 메시지, 알림을 실시간으로 연결합니다.
 
 ---
 
@@ -43,77 +34,73 @@ Kafka 기반 이벤트 스트림으로 코드 리뷰와 팀 커뮤니케이션�
 
 ---
 
-## ⚙️ 기술 스택
+## ⚙️ Tech Stack
 
-### 🖥️ **Backend**
-| 분류 | 기술 |
-|------|------|
-| Language | Java 17 |
-| Framework | Spring Boot 3.3.3 |
-| ORM | Spring Data JPA |
-| Database | PostgreSQL |
-| Cache / Queue | Redis, Apache Kafka |
-| AI / LLM | OpenAI API, LangChain4j |
-| Auth | Spring Security + JWT |
-| Docs | Springdoc OpenAPI (Swagger UI) |
+### 🖥️ Backend
+![Java 17](https://img.shields.io/badge/Java_17-007396?logo=openjdk&logoColor=white)
+![Spring Boot 3.3.3](https://img.shields.io/badge/Spring_Boot_3.3.3-6DB33F?logo=springboot&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-59666C?logo=spring&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?logo=apachekafka&logoColor=white)
+![OpenAI API](https://img.shields.io/badge/OpenAI_API-412991?logo=openai&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?logo=springsecurity&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white)
+![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?logo=swagger&logoColor=black)
 
-### 💻 **Frontend**
-| 분류 | 기술                       |
-|------|--------------------------|
-| Framework | React 18 (TypeScript)    |
-| Styling | Styled-components / SCSS |
-| State Management | Redux Toolkit            |
-| Build | CRA (또는 Vite) 예정         |
+### 💻 Frontend
+![React 18](https://img.shields.io/badge/React_18-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Styled Components](https://img.shields.io/badge/Styled_Components-DB7093?logo=styledcomponents&logoColor=white)
+![SCSS](https://img.shields.io/badge/SCSS-CC6699?logo=sass&logoColor=white)
+![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-764ABC?logo=redux&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![CRA](https://img.shields.io/badge/Create_React_App-09D3AC?logo=createreactapp&logoColor=white)
 
-### ☁️ **Infra**
-| 구성 | 기술 |
-|------|------|
-| CI/CD | GitHub Actions |
-| Hosting | AWS EC2, S3 |
-| Repository | Monorepo (Backend + Frontend) |
+### ☁️ Infra
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?logo=amazonec2&logoColor=white)
+![AWS S3](https://img.shields.io/badge/AWS_S3-569A31?logo=amazons3&logoColor=white)
+![Monorepo](https://img.shields.io/badge/Monorepo-181717?logo=github&logoColor=white)
 
 ---
 
-## 🧱 시스템 구조도
+## 🧱 아키텍처 설계
 ```mermaid
 flowchart LR
-    subgraph Frontend[React Frontend]
-    A[React UI] --> B[Redux Store]
+    subgraph Frontend
+        A[React 대시보드]
     end
 
-    subgraph Backend[Spring Boot Backend]
-    B --> C[REST API]
-    C --> D[JPA / PostgreSQL]
-    C --> E[Redis Cache]
-    C --> F[Kafka Event Stream]
-    F --> G[LLM Review Worker]
+    subgraph Backend
+        B[Spring Boot API]
+        C[Node.js Gateway]
     end
 
-    subgraph AI[AI Engine]
-    G --> H[LangChain4j + OpenAI API]
+    subgraph Workers
+        D[Static Analysis Worker]
+        E[AI Review Worker]
     end
+
+    subgraph Infra
+        F[(Apache Kafka)]
+        G[(PostgreSQL DB)]
+        H[(Redis Cache)]
+    end
+
+    A -->|HTTP 요청| B
+    B -->|이벤트 발행| F
+    F --> D
+    D -->|결과 발행| F
+    F --> E
+    E -->|AI 리뷰 발행| F
+    F --> C
+    C -->|WebSocket/SSE| A
+    C -->|notify.events| I[Slack/Discord 알림 예정]
+    B --> G
+    C --> G
+
 ```
-
----
-
-## 🚀 실행 방법
-
-### 📍 1. 백엔드 (Spring Boot)
-```bash
-cd backend
-./gradlew bootRun
-```
-- 기본 포트: `8080`
-- Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-
-### 📍 2. 프론트엔드 (React)
-```bash
-cd frontend
-npm install
-npm start
-```
-- 기본 포트: `3000`
-- 개발 환경에서 백엔드와 프록시 연결 예정
 
 ---
 
