@@ -1,0 +1,8 @@
+@use "./reset";
+@use "./variables";
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+  background-color: variables.$color-bg;
+  color: variables.$color-text;
+}
