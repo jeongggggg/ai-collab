@@ -10,8 +10,6 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
-    // maven { url 'https://s01.oss.sonatype.org/content/repositories/releases/' }
-    // maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
@@ -21,28 +19,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    implementation 'org.springframework.kafka:spring-kafka'
-
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    implementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
-    // implementation 'dev.langchain4j:langchain4j:0.32.0'
-    // implementation 'dev.langchain4j:langchain4j-openai:0.32.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 }
 
 tasks.named('test') {
