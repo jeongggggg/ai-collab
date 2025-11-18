@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: ai-collab-backend
+
+logging:
+  level:
+    org.springframework.web: debug
