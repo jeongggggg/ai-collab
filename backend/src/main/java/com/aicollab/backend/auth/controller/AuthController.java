@@ -12,8 +12,8 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/callback")
-    public AuthResponse callback(@RequestParam String code) {
+    @PostMapping("/exchange")
+    public AuthResponse exchange(@RequestParam String code) {
         return authService.login(code);
     }
 }
