@@ -3,38 +3,17 @@ package com.aicollab.backend.auth.dto.response;
 public class AuthResponse {
 
     private String accessToken; // JWT
-    private Long userId;
-    private String login;
-    private String email;
-    private String avatarUrl;
+    private final UserInfo user;
 
-    protected AuthResponse(){}
-
-    public AuthResponse(String accessToken, Long userId, String login, String email, String avatarUrl) {
+    private AuthResponse(String accessToken, UserInfo user) {
         this.accessToken = accessToken;
-        this.userId = userId;
-        this.login = login;
-        this.email = email;
-        this.avatarUrl = avatarUrl;
+        this.user = user;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public static AuthResponse of(String accessToken, Long id, String login, String email, String avatarUrl) {
+        return new AuthResponse(
+                accessToken,
+                new UserInfo(id, login, email, avatarUrl)
+        );
     }
 }
