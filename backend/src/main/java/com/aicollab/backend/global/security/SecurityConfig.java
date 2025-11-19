@@ -1,5 +1,6 @@
 package com.aicollab.backend.global.security;
 
+import com.aicollab.backend.auth.jwt.JwtTokenProvider;
 import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

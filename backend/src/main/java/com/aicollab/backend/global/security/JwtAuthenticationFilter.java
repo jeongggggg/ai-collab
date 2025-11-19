@@ -1,5 +1,6 @@
 package com.aicollab.backend.global.security;
 
+import com.aicollab.backend.auth.jwt.JwtTokenProvider;
 import com.aicollab.backend.user.domain.User;
 import com.aicollab.backend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
