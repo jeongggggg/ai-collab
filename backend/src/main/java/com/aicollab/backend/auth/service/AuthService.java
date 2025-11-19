@@ -2,7 +2,9 @@ package com.aicollab.backend.auth.service;
 
 import com.aicollab.backend.auth.dto.response.AuthResponse;
 import com.aicollab.backend.auth.dto.response.GithubUserResponse;
+import com.aicollab.backend.global.security.JwtTokenProvider;
 import com.aicollab.backend.user.domain.User;
+import com.aicollab.backend.user.domain.UserRole;
 import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,22 +15,29 @@ public class AuthService {
 
     private final OAuthRestClient oauthClient;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // Github 인증 전체 로직
     public AuthResponse login(String code){
         // 1) access token 요청
         String accessToken = oauthClient.requestAccessToken(code);
 
-        // 2) Github 사용자 정보 요청
+        // 2) Github 유저 조회
         GithubUserResponse githubUser = oauthClient.requestUserInfo(accessToken);
 
-        // 3) DB에 존재하는 사용자 조회 or 신규 생성
+        String email = (githubUser.getEmail() == null || githubUser.getEmail().isBlank())
+            ? githubUser.getLogin() + "@users.noreply.github.com"
+            : githubUser.getEmail();
+
+        // 3) 기존 유저 조회 or 신규 생성
         User user = userRepository.findByGithubId(githubUser.getId())
-                .orElseGet(() -> createNewUser(githubUser));
+                .map(existing -> updateExistingUser(existing, githubUser, email))
+                .orElseGet(() -> createNewUser(githubUser, email));
 
-        // 4) JWT (임시 문자열)
-        String jwt = "FAKE_JWT_TOKEN";
+        // 4) JWT (임시)
+        String jwt = jwtTokenProvider.createAccessToken(user.getId(), user.getLogin());
 
+        // 5) 응답
         return AuthResponse.of(
                 jwt,
                 user.getId(),
@@ -38,14 +47,27 @@ public class AuthService {
         );
     }
 
-    private User createNewUser(GithubUserResponse user){
-        return userRepository.save(
-                User.builder()
-                        .githubId(user.getId())
-                        .login(user.getLogin())
-                        .email(user.getEmail())
-                        .avatarUrl(user.getAvatarUrl())
-                        .build()
+    private User updateExistingUser(User user, GithubUserResponse github, String email) {
+        user.updateFromGithub(
+                github.getName(),
+                email,
+                github.getAvatarUrl()
         );
+
+        user.updateLastLogin();
+        return userRepository.save(user);
+    };
+
+    private User createNewUser(GithubUserResponse github, String email){
+        User newUser = User.builder()
+                .githubId(github.getId())
+                .login(github.getLogin())
+                .name(github.getName())
+                .email(email)
+                .avatarUrl(github.getAvatarUrl())
+                .role(UserRole.USER)   // ENUM 사용
+                .build();
+
+        return userRepository.save(newUser);
     }
 }
