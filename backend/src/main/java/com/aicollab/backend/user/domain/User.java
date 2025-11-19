@@ -19,7 +19,7 @@ public class User {
 
     // Github 내부 ID
     @Column(nullable = false, unique = true)
-    private String githubId;
+    private Long githubId;
 
     @Column(nullable = false, length= 100)
     private String login;
