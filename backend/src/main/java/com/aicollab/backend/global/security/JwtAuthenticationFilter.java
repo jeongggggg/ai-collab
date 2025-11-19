@@ -33,14 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String requestUri = request.getRequestURI();
-
-        // 인증 제외 패스
-        if (isPublicPath(requestUri)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String header = request.getHeader(HEADER);
 
         if (header != null && header.startsWith(PREFIX)) {
@@ -66,13 +58,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean isPublicPath(String uri) {
-        return uri.startsWith("/api/auth")
-                || uri.startsWith("/swagger-ui")
-                || uri.startsWith("/v3/api-docs")
-                || uri.equals("/")
-                || uri.startsWith("/error");
     }
 }
