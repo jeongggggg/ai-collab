@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/github")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/exchange")
-    public AuthResponse exchange(@RequestParam String code) {
+    @GetMapping("/callback")
+    public AuthResponse callback(@RequestParam String code) {
         return authService.login(code);
     }
 }
