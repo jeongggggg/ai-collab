@@ -2,7 +2,7 @@ package com.aicollab.backend.auth.service;
 
 import com.aicollab.backend.auth.dto.response.AuthResponse;
 import com.aicollab.backend.auth.dto.response.GithubUserResponse;
-import com.aicollab.backend.global.security.JwtTokenProvider;
+import com.aicollab.backend.auth.jwt.JwtTokenProvider;
 import com.aicollab.backend.user.domain.User;
 import com.aicollab.backend.user.domain.UserRole;
 import com.aicollab.backend.user.repository.UserRepository;
@@ -56,7 +56,7 @@ public class AuthService {
 
         user.updateLastLogin();
         return userRepository.save(user);
-    };
+    }
 
     private User createNewUser(GithubUserResponse github, String email){
         User newUser = User.builder()
