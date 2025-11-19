@@ -2,7 +2,7 @@ package com.aicollab.backend.auth.dto.response;
 
 public class AuthResponse {
 
-    private String accessToken; // JWT
+    private final String accessToken; // JWT
     private final UserInfo user;
 
     private AuthResponse(String accessToken, UserInfo user) {
@@ -15,5 +15,13 @@ public class AuthResponse {
                 accessToken,
                 new UserInfo(id, login, email, avatarUrl)
         );
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public UserInfo getUser() {
+        return user;
     }
 }
