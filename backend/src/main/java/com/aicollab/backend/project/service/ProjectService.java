@@ -2,6 +2,7 @@ package com.aicollab.backend.project.service;
 
 import com.aicollab.backend.project.domain.Project;
 import com.aicollab.backend.project.dto.request.ProjectCreateRequest;
+import com.aicollab.backend.project.dto.response.ProjectResponse;
 import com.aicollab.backend.project.repository.ProjectRepository;
 import com.aicollab.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,20 @@ public class ProjectService {
     public Project get(Long id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+    }
+
+    public ProjectResponse toResponse(Project p) {
+        return ProjectResponse.builder()
+                .id(p.getId())
+                .name(p.getName())
+                .description(p.getDescription())
+                .owner(
+                        ProjectResponse.OwnerInfo.builder()
+                                .id(p.getOwner().getId())
+                                .login(p.getOwner().getLogin())
+                                .build()
+                )
+                .build();
     }
 
     public void delete(Long id, User requester) {

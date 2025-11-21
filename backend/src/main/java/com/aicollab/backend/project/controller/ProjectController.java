@@ -4,6 +4,7 @@ import com.aicollab.backend.auth.security.UserPrincipal;
 import com.aicollab.backend.global.response.ApiResponse;
 import com.aicollab.backend.project.domain.Project;
 import com.aicollab.backend.project.dto.request.ProjectCreateRequest;
+import com.aicollab.backend.project.dto.response.ProjectResponse;
 import com.aicollab.backend.project.service.ProjectService;
 import com.aicollab.backend.user.domain.User;
 import com.aicollab.backend.user.repository.UserRepository;
@@ -40,6 +41,16 @@ public class ProjectController {
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
         return ApiResponse.success(projectService.getMyProjects(user));
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<ProjectResponse> getProject(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        return ApiResponse.success(
+                projectService.toResponse(projectService.get(id))
+        );
     }
 
     @DeleteMapping("/{id}")
