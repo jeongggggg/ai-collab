@@ -4,6 +4,8 @@ import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContent
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
 import com.aicollab.backend.infrastructure.github.GitHubClient;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
+import com.aicollab.backend.infrastructure.github.parser.DiffChange;
+import com.aicollab.backend.infrastructure.github.parser.DiffParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,5 +61,9 @@ public class GithubService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse file content: " + e.getMessage());
         }
+    }
+
+    public List<DiffChange> parseDiffLines(String patch) {
+        return DiffParser.parse(patch);
     }
 }
