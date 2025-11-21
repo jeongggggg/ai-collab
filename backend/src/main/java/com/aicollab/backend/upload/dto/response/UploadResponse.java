@@ -13,6 +13,6 @@ public class UploadResponse {
     public UploadResponse(Upload upload) {
         this.id = upload.getId();
         this.commitSha = upload.getCommitSha();
-        this.status = upload.getStatus().toString();
+        this.status = upload.getStatus().name();
     }
 }

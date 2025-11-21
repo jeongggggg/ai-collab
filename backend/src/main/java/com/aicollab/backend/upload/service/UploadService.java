@@ -19,6 +19,7 @@ public class UploadService {
     private final UploadRepository uploadRepository;
     private final UserRepository userRepository;
 
+    // 생성
     public Upload create(Long projectId, Long userId, UploadCreateRequest req) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
@@ -37,5 +38,16 @@ public class UploadService {
                 .build();
 
         return uploadRepository.save(upload);
+    }
+
+    // 조회
+    public Upload getById(Long projectId, Long uploadId, Long userId) {
+
+        Upload upload = uploadRepository.findById(uploadId)
+                .orElseThrow(() -> new IllegalArgumentException("Upload not found"));
+        if(!upload.getProject().getId().equals(projectId)) {
+            throw new IllegalArgumentException("Project is not owner of this upload");
+        }
+        return upload;
     }
 }
