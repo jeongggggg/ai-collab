@@ -1,0 +1,55 @@
+package com.aicollab.backend.github.service;
+
+import com.aicollab.backend.analysis.dto.request.LLMReviewRequest;
+import com.aicollab.backend.analysis.service.LLMReviewService;
+import com.aicollab.backend.github.dto.response.PrAnalysisResponse;
+import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
+import com.aicollab.backend.infrastructure.github.parser.DiffChange;
+import com.aicollab.backend.infrastructure.github.parser.DiffParser;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class PrAnalysisService {
+
+    private final GithubService githubService;
+    private final DiffParser diffParser;
+    private final LLMReviewService llmReviewService;
+
+    public PrAnalysisResponse analyze(String owner, String repo, int prNumber) {
+
+        // 1) PR 파일 목록 가져오기
+        List<PullRequestFileResponse> files = githubService.getPullRequestFiles(owner, repo, prNumber);
+
+        List<PrAnalysisResponse.FileAnalysis> analysisList = new ArrayList<>();
+
+        for(PullRequestFileResponse file : files) {
+
+            // patch 없는 파일 스킵
+            if (file.getPatch() == null) continue;
+
+            // 2) diff 파싱
+            List<DiffChange> parsed = diffParser.parse(file.getPatch());
+
+            // LLM 요청 DTO
+            LLMReviewRequest request = new LLMReviewRequest(file.getFilename(), parsed);
+
+            // 3) GPT 리뷰 생성
+            String review = llmReviewService.generateReview(request).getReview();
+
+            // 4) 파일별 분석 저장
+            analysisList.add(
+                    PrAnalysisResponse.FileAnalysis.builder()
+                            .filename(file.getFilename())
+                            .review(review)
+                            .build()
+            );
+        }
+        // 5) 최종 응답 생성
+        return PrAnalysisResponse.of(prNumber, analysisList);
+    }
+}

@@ -19,6 +19,8 @@ import java.util.List;
 public class GithubService {
 
     private final GitHubClient gitHubClient;
+    private final DiffParser diffParser;
+
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -64,6 +66,6 @@ public class GithubService {
     }
 
     public List<DiffChange> parseDiffLines(String patch) {
-        return DiffParser.parse(patch);
+        return diffParser.parse(patch);
     }
 }
