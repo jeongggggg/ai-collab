@@ -1,5 +1,6 @@
 package com.aicollab.backend.upload.service;
 
+import com.aicollab.backend.infrastructure.github.GithubRestClient;
 import com.aicollab.backend.project.domain.Project;
 import com.aicollab.backend.project.repository.ProjectRepository;
 import com.aicollab.backend.upload.domain.Upload;
@@ -18,6 +19,7 @@ public class UploadService {
     private final ProjectRepository projectRepository;
     private final UploadRepository uploadRepository;
     private final UserRepository userRepository;
+    private final GithubRestClient githubRestClient;
 
     // 업로드 생성 (Owner만 가능)
     public Upload create(Long projectId, Long userId, UploadCreateRequest req) {
@@ -33,6 +35,13 @@ public class UploadService {
         // 요청자가 소유자인지 검증
         if (!project.getOwner().getId().equals(owner.getId())) {
             throw new IllegalArgumentException("User is not owner of this project");
+        }
+
+        // commit SHA 검증
+        try {
+            githubRestClient.getCommit(project.getOwner().getLogin(), project.getName(), req.getCommitSha());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid commit SHA");
         }
 
         // 업로드 엔티티 생성
