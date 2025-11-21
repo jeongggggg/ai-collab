@@ -15,11 +15,13 @@ import com.aicollab.backend.user.domain.User;
 import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UploadService {
 
     private final ProjectRepository projectRepository;
