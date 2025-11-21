@@ -1,7 +1,10 @@
 package com.aicollab.backend.infrastructure.github.dto.response;
 
+import com.aicollab.backend.user.domain.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class PullRequestResponse {
@@ -13,6 +16,17 @@ public class PullRequestResponse {
     @JsonProperty("created_at")
     private String createdAt;
 
-    @JsonProperty("updated_at")
-    private String updatedAt;
+    private GithubUser user;
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class GithubUser {
+
+        private String login;
+
+        @JsonProperty("avatar_url")
+        private String avatarUrl;
+
+        private Long id;
+    }
 }
