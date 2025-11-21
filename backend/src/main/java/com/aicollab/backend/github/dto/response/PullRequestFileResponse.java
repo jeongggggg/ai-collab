@@ -1,0 +1,32 @@
+package com.aicollab.backend.github.dto.response;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+
+@Getter
+public class PullRequestFileResponse {
+
+    private String filename;
+
+    @JsonProperty("status")
+    private String status;
+
+    @JsonProperty("additions")
+    private int additions;
+
+    @JsonProperty("deletions")
+    private int deletions;
+
+    @JsonProperty("changes")
+    private int changes;
+
+    @JsonProperty("blob_url")
+    private String blobUrl;
+
+    @JsonProperty("raw_url")
+    private String rawUrl;
+
+    @JsonProperty("patch")
+    private String patch; // diff 내용
+
+}

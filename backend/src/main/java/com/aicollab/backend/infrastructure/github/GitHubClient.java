@@ -37,4 +37,21 @@ public class GitHubClient {
                 String.class
         );
     }
+
+    public ResponseEntity<String> getPullRequestFiles(String owner, String repo, int prNumber) {
+        String url = "https://api.github.com/repos/" + owner + "/" + repo + "/pulls/" + prNumber + "/files";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken); // 이미 등록됨
+        headers.set("Accept", "application/vnd.github+json");
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                String.class
+        );
+    }
 }
