@@ -2,7 +2,9 @@ package com.aicollab.backend.auth.controller;
 
 import com.aicollab.backend.auth.dto.response.AuthResponse;
 import com.aicollab.backend.auth.dto.response.UserInfo;
+import com.aicollab.backend.auth.security.UserPrincipal;
 import com.aicollab.backend.auth.service.AuthService;
+import com.aicollab.backend.global.response.ApiResponse;
 import com.aicollab.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,16 +23,12 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public UserInfo me(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            // Security 필터에서 인증 안 된 상태면 여기 안 들어오게 설정돼 있음
-            return null;
-        }
+    public UserInfo me(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return new UserInfo(
-                user.getId(),
-                user.getLogin(),
-                user.getEmail(),
-                user.getAvatarUrl()
+                userPrincipal.getId(),
+                userPrincipal.getLogin(),
+                userPrincipal.getEmail(),
+                userPrincipal.getAvatarUrl()
         );
     }
 }

@@ -1,6 +1,7 @@
 package com.aicollab.backend.global.security;
 
 import com.aicollab.backend.auth.jwt.JwtTokenProvider;
+import com.aicollab.backend.auth.security.UserPrincipal;
 import com.aicollab.backend.user.domain.User;
 import com.aicollab.backend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -9,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,11 +19,9 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
-
-    private static final String HEADER = "Authorization";
-    private static final String PREFIX = "Bearer ";
 
     @Override
     protected void doFilterInternal(
@@ -33,21 +30,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String header = request.getHeader(HEADER);
+        String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith(PREFIX)) {
-            String token = header.substring(PREFIX.length());
+        if (header != null && header.startsWith("Bearer ")) {
+
+            String token = header.substring(7);
 
             if (jwtTokenProvider.validateToken(token)) {
-                Long userId = jwtTokenProvider.getUserId(token);
 
+                Long userId = jwtTokenProvider.getUserId(token);
                 User user = userRepository.findById(userId).orElse(null);
+
                 if (user != null) {
-                    List<GrantedAuthority> authorities =
-                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+
+                    UserPrincipal principal = new UserPrincipal(user);
 
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(user, null, authorities);
+                            new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+
                     authentication.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
