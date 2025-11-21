@@ -19,18 +19,23 @@ public class UploadService {
     private final UploadRepository uploadRepository;
     private final UserRepository userRepository;
 
-    // 생성
+    // 업로드 생성 (Owner만 가능)
     public Upload create(Long projectId, Long userId, UploadCreateRequest req) {
+
+        // 프로젝트 확인
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
+        // 사용자 확인
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // 요청자가 소유자인지 검증
         if (!project.getOwner().getId().equals(owner.getId())) {
             throw new IllegalArgumentException("User is not owner of this project");
         }
 
+        // 업로드 엔티티 생성
         Upload upload = Upload.builder()
                 .project(project)
                 .commitSha(req.getCommitSha())
@@ -40,11 +45,13 @@ public class UploadService {
         return uploadRepository.save(upload);
     }
 
-    // 조회
+    // 업로드 조회 (프로젝트 ID & 업로드 ID 검증)
     public Upload getById(Long projectId, Long uploadId, Long userId) {
 
         Upload upload = uploadRepository.findById(uploadId)
                 .orElseThrow(() -> new IllegalArgumentException("Upload not found"));
+
+        // 업로드가 해당 프로젝트에 속하는지 검증
         if(!upload.getProject().getId().equals(projectId)) {
             throw new IllegalArgumentException("Project is not owner of this upload");
         }

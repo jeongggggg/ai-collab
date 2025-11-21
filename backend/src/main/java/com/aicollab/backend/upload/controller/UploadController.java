@@ -18,7 +18,7 @@ public class UploadController {
 
     private final UploadService uploadService;
 
-    // 생성
+    // 업로드 생성 (Owner만 가능)
     @PostMapping
     public ApiResponse<UploadResponse> createUpload(
             @PathVariable Long projectId,
@@ -29,7 +29,7 @@ public class UploadController {
         return ApiResponse.success(new UploadResponse(upload));
     }
 
-    // 조회
+    // 업로드 상세 조회 (프로젝트 ID & 업로드 ID 일치 여부 검증)
     @GetMapping("/{uploadId}")
     public ApiResponse<UploadResponse> getUpload(
             @PathVariable Long projectId,
