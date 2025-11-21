@@ -1,4 +1,4 @@
-package com.aicollab.backend.github.dto.response;
+package com.aicollab.backend.infrastructure.github.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

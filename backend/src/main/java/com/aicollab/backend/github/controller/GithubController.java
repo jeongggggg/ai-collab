@@ -1,6 +1,7 @@
 package com.aicollab.backend.github.controller;
 
-import com.aicollab.backend.github.dto.response.PullRequestFileResponse;
+import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
+import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
 import com.aicollab.backend.github.service.GithubService;
 import com.aicollab.backend.global.response.ApiResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
@@ -33,6 +34,16 @@ public class GithubController {
         return ApiResponse.success(
                 githubService.getPullRequestFiles(owner, repo, prNumber)
         );
+    }
+
+    @GetMapping("/file")
+    public ApiResponse<GithubFileContentResponse> getFileContent(
+            @RequestParam String owner,
+            @RequestParam String repo,
+            @RequestParam String path,
+            @RequestParam String sha
+    ) {
+        return ApiResponse.success(githubService.getFileContent(owner, repo, path, sha));
     }
 
 }

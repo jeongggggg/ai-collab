@@ -1,6 +1,7 @@
 package com.aicollab.backend.github.service;
 
-import com.aicollab.backend.github.dto.response.PullRequestFileResponse;
+import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
+import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
 import com.aicollab.backend.infrastructure.github.GitHubClient;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -44,6 +45,19 @@ public class GithubService {
             );
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse PR file list: " + e.getMessage());
+        }
+    }
+
+    public GithubFileContentResponse getFileContent(String owner, String repo, String path, String sha) {
+        var response = gitHubClient.getFileContent(owner, repo, path, sha);
+
+        try {
+            return objectMapper.readValue(
+                    response.getBody(),
+                    GithubFileContentResponse.class
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse file content: " + e.getMessage());
         }
     }
 }

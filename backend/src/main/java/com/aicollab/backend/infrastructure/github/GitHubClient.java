@@ -54,4 +54,19 @@ public class GitHubClient {
                 String.class
         );
     }
+
+    public ResponseEntity<String> getFileContent(String owner, String repo, String path, String ref) {
+        String url = "https://api.github.com/repos/" + owner + "/" + repo + "/contents/" + path + "?ref=" + ref;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.set("Accept", "application/vnd.github+json");
+
+        return restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class
+        );
+    }
 }
