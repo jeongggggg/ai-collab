@@ -39,4 +39,16 @@ public class Upload {
             this.status = UploadStatus.PENDING;
 
     }
+
+    public void complete() {
+        this.status = UploadStatus.COMPLETED;
+    }
+
+    public void fail() {
+        this.status = UploadStatus.FAILED;
+    }
+
+    public void updateStatus(UploadStatus status) {
+        this.status = status;
+    }
 }
