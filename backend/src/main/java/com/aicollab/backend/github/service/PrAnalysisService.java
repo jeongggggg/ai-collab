@@ -33,13 +33,22 @@ public class PrAnalysisService {
             // 2) diff 파싱
             var parsed = diffParser.parse(file.getPatch());
 
+            // DiffChange → String 변환
+            List<String> diffLines = parsed.stream()
+                    .map(dc -> switch (dc.getType()) {
+                        case "added" -> "+" + dc.getContent();
+                        case "removed" -> "-" + dc.getContent();
+                        default -> dc.getContent();
+                    })
+                    .toList();
+
             // LLM 요청 DTO
             LLMReviewRequest request = LLMReviewRequest.builder()
                     .filename(file.getFilename())
-                    .diff(parsed)
+                    .diff(diffLines)
                     .build();
 
-            // 3) GPT 리뷰 생성
+            // 3) OpenAI 리뷰 생성
             String review = llmReviewService.generateReview(request).getReview();
 
             // 4) 파일별 분석 저장

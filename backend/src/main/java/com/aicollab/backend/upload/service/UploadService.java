@@ -16,6 +16,7 @@ import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.aicollab.backend.github.dto.response.PrAnalysisResponse;
 
 import java.util.List;
 
@@ -106,7 +107,12 @@ public class UploadService {
         );
 
         // 4) 분석 완료 처리
-        run.complete(result.toString());
+        String combinedReviews = result.getFiles().stream()
+                .map(PrAnalysisResponse.FileAnalysis::getReview)
+                .reduce("", (a, b) -> a + "\n\n" + b);
+
+        run.complete(combinedReviews.trim());
+
         analysisRunRepository.save(run);
 
         // 5) 업로드 상태도 완료 처리

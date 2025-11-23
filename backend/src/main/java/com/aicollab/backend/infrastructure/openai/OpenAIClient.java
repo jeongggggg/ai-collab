@@ -12,35 +12,32 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class OpenAIClient {
 
-    @Value("${openai.api.key}")
-    private String apiKey;
-
-    @Value("${openai.model:gpt-4o-mini}")
-    private String model;
-
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public OpenAIChatResponse chat(OpenAIChatRequest request) {
+    @Value("${openai.api-key}")
+    private String apiKey;
 
-        String url = "https://api.openai.com/v1/chat/completions";
+    public String createChatCompletion(String prompt) {
+
+        OpenAIChatRequest body = OpenAIChatRequest.of(prompt);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
 
-        HttpEntity<OpenAIChatRequest> entity = new HttpEntity<>(request, headers);
+        HttpEntity<OpenAIChatRequest> entity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<OpenAIChatResponse> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                entity,
-                OpenAIChatResponse.class
-        );
+        ResponseEntity<OpenAIChatResponse> response =
+                restTemplate.postForEntity(
+                        "https://api.openai.com/v1/chat/completions",
+                        entity,
+                        OpenAIChatResponse.class
+                );
 
-        return response.getBody();
-    }
-
-    public String getDefaultModel() {
-        return model;
+        return response.getBody()
+                .getChoices()
+                .get(0)
+                .getMessage()
+                .getContent();
     }
 }
