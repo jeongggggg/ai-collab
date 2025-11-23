@@ -19,6 +19,7 @@ public class UploadDetailResponse {
     private String commitSha;
     private UploadStatus status;
     private LocalDateTime createdAt;
+
     private List<AnalysisRunResponse> analysisRuns;
 
     public static UploadDetailResponse from(Upload upload, List<AnalysisRun> runs) {

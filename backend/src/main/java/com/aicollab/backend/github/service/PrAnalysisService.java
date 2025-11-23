@@ -26,40 +26,36 @@ public class PrAnalysisService {
         List<PullRequestFileResponse> files = githubService.getPullRequestFiles(owner, repo, prNumber);
         List<PrAnalysisResponse.FileAnalysis> analysisList = new ArrayList<>();
 
+        // 파일별 리뷰 텍스트 누적 저장
+        List<String> accumulatedReviews = new ArrayList<>();
+
         for (PullRequestFileResponse file : files) {
 
-            // fullCode 조회 (patch 없어도 전체 파일 로딩 가능)
-            var content = githubService.getFileContent(owner, repo, file.getFilename(), extractSha(file));
-            String fullCode = decodeContent(content);
+            // 1) SHA 추출
+            String sha = extractSha(file);
 
-            // DIFF 처리
-            List<String> diffLines = null;
+            // 2) 원본 코드 조회
+            String fullCode = fetchFullCode(owner, repo, file.getFilename(), sha);
 
-            if (file.getPatch() != null) {
-                var parsed = diffParser.parse(file.getPatch());
-                diffLines = parsed.stream()
-                        .map(dc -> switch (dc.getType()) {
-                            case "added" -> "+" + dc.getContent();
-                            case "removed" -> "-" + dc.getContent();
-                            default -> dc.getContent();
-                        })
-                        .toList();
-            }
+            // 3) DIFF 처리
+            List<String> diffLines = buildDiffLines(file);
 
-            // Diff도 없고 fullCode도 없으면 스킵
+            // Diff도 fullCode도 없으면 리뷰 불가 → 건너뜀
             if ((diffLines == null || diffLines.isEmpty()) && fullCode.isBlank()) {
                 continue;
             }
 
-            // GPT 요청 DTO 생성
+            // 4) GPT 요청 DTO 생성
             LLMReviewRequest request = LLMReviewRequest.builder()
                     .filename(file.getFilename())
-                    .diff(diffLines)       // patch 없는 경우 null
-                    .fullCode(fullCode)     // fullCode 기반 리뷰 가능
+                    .diff(diffLines == null ? List.of() : diffLines)
+                    .fullCode(fullCode)
                     .build();
 
-            // 리뷰 생성
+            // 5) 리뷰 생성
             String review = llmReviewService.generateReview(request).getReview();
+
+            accumulatedReviews.add("### [" + file.getFilename() + "]\n" + review);
 
             analysisList.add(
                     PrAnalysisResponse.FileAnalysis.builder()
@@ -69,25 +65,47 @@ public class PrAnalysisService {
             );
         }
 
-        return PrAnalysisResponse.of(prNumber, analysisList);
+        String summaryReview = llmReviewService.generateSummary(accumulatedReviews);
+
+        return PrAnalysisResponse.of(prNumber, summaryReview, analysisList);
     }
 
     // SHA 추출
     private String extractSha(PullRequestFileResponse file) {
         try {
-            return file.getRawUrl().split("/")[file.getRawUrl().split("/").length - 2];
+            String[] parts = file.getRawUrl().split("/");
+            return parts[5];   // SHA 위치
         } catch (Exception e) {
             return null;
         }
     }
 
     // BASE64 디코딩
-    private String decodeContent(GithubFileContentResponse content) {
+    private String fetchFullCode(String owner, String repo, String filename, String sha) {
         try {
+            GithubFileContentResponse content =
+                    githubService.getFileContent(owner, repo, filename, sha);
+
             if (content != null && content.getEncodedContent() != null) {
-                return new String(Base64.getDecoder().decode(content.getEncodedContent()));
+                return new String(Base64.getMimeDecoder().decode(content.getEncodedContent()));
             }
         } catch (Exception ignored) {}
+
         return "";
+    }
+
+    // Diff 문자열 리스트 변환
+    private List<String> buildDiffLines(PullRequestFileResponse file) {
+        if (file.getPatch() == null) return null;
+
+        var parsed = diffParser.parse(file.getPatch());
+
+        return parsed.stream()
+                .map(dc -> switch (dc.getType()) {
+                    case "added" -> "+" + dc.getContent();
+                    case "removed" -> "-" + dc.getContent();
+                    default -> dc.getContent();
+                })
+                .toList();
     }
 }

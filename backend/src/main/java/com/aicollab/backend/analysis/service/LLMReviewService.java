@@ -6,6 +6,8 @@ import com.aicollab.backend.infrastructure.openai.OpenAIClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LLMReviewService {
@@ -20,39 +22,70 @@ public class LLMReviewService {
         return new LLMReviewResponse(reviewText);
     }
 
+    public String generateSummary(List<String> fileReviews) {
+
+        String allReviews = String.join("\n\n", fileReviews);
+
+        String summaryPrompt = """
+                당신은 숙련된 시니어 백엔드 엔지니어입니다.
+                아래는 Pull Request 내 여러 파일에 대한 AI 리뷰 내용입니다.
+
+                이 리뷰들을 기반으로 PR 전체에 대한 '종합 리뷰'를 생성하세요.
+
+                요구사항:
+                - 한국어로 작성
+                - 기술적 깊이 강조
+                - 중요 문제 우선순위 정리
+                - 버그 / 성능 / 보안 / 유지보수성 관점에서 평가
+                - 다음 개선사항까지 제안
+                - markdown 형식 유지
+
+                --------------------
+                🔍 파일 리뷰 모음
+                --------------------
+                %s
+
+                --------------------
+                ✨ 출력 형식
+                --------------------
+                # PR 종합 리뷰
+
+                ## 🔎 주요 변경 요약
+
+                ## 🐞 잠재적 문제 요약
+
+                ## ⚡ 성능 영향 요약
+
+                ## 🔒 보안 검토 요약
+
+                ## 🛠 리팩토링 및 구조 개선 제안
+
+                ## 🧪 추가 테스트 제안
+
+                ## 🎯 종합 평가 및 권장 조치
+
+                절대로 위 템플릿을 벗어나지 마세요.
+                """.formatted(allReviews);
+
+        return openAIClient.createChatCompletion(summaryPrompt);
+    }
+
     private String buildPrompt(LLMReviewRequest req) {
 
-        String diffBlock = String.join("\n", req.getDiff());
+        String diffBlock = (req.getDiff() == null || req.getDiff().isEmpty())
+                ? "(변경 사항 없음)"
+                : String.join("\n", req.getDiff());
+
         String fullCode = req.getFullCode() == null ? "" : req.getFullCode();
 
         return """
-                You are a senior backend engineer and professional code reviewer.
-                Provide accurate and practical feedback based on BOTH the given diff and the full source code.
-
-                ⚠️ Important Rules:
-                1. Always review based on BOTH diff changes and full code context.
-                2. Respond in Korean.
-                3. Output MUST follow the structured markdown template.
-                4. Cite exact line numbers when referring to code.
-                5. If a commit message is included in the diff, evaluate whether the commit type follows the rules.
-
-                📄 Commit Type Convention (검증 기준)
-                ✨ Feat — 새로운 기능 추가
-                🐛 Fix — 버그 수정
-                🧹 Refactor — 리팩터링 (기능 변화 없음)
-                🎨 Style — 코드 스타일/포맷 수정
-                🧪 Test — 테스트 코드 추가/수정
-                📄 Docs — 문서 수정
-                🔧 Chore — 설정/빌드/패키지 변경
-                🚀 Deploy — 배포 관련 변경
-                🧩 Config — 환경 설정 변경
-                🗑️ Remove — 삭제 작업
-
-                📑 커밋 메시지 분석 시 체크 사항:
-                - 커밋 타입이 작업 내용과 의미적으로 일치하는가?
-                - 여러 타입의 작업인데 단일 타입만 사용된 것은 아닌가?
-                - 이모지 및 타입 네이밍 규칙을 따르는가?
-                - 지나치게 모호하거나 광범위한 커밋 메시지는 아닌가?
+                당신은 10년 경력의 시니어 백엔드 개발자이며 전문 코드 리뷰어입니다.
+                아래 Diff와 전체 코드를 기반으로 실전 프로덕션 환경 수준의 리뷰를 생성하세요.
+    
+                ⚠️ 리뷰 규칙:
+                - 반드시 한국어로 작성
+                - Diff + 전체 코드(full source code) 모두 참고
+                - 아래 템플릿을 STRICT하게 준수
 
                 ---------------------
                 ✨ 파일명: %s
@@ -65,7 +98,7 @@ public class LLMReviewService {
                 %s
 
                 ---------------------
-                📌 아래 템플릿을 STRICT하게 따르세요:
+                📌 리뷰 템플릿:
 
                 # 파일명: %s
 
@@ -89,10 +122,6 @@ public class LLMReviewService {
 
                 ## 🧪 테스트 누락 분석
                 - 추가 필요 테스트 시나리오 제안
-
-                ## 🗂 커밋 타입 적합성 검토
-                - 적용된 커밋 타입이 규칙에 맞는지 분석
-                - 부적절한 경우 올바른 타입 제안
 
                 ## ✨ 종합 평가
                 - 전체 리뷰 요약 및 개선 방향

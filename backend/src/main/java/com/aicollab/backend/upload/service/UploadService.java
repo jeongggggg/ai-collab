@@ -104,22 +104,27 @@ public class UploadService {
     // 자동 분석 실행
     private void runAnalysis(Project project, Upload upload, int prNumber) {
 
-        // 분석 실행 로그 생성
+        // 1) 분석 실행 로그 생성
         AnalysisRun run = analysisRunRepository.save(AnalysisRun.createPending(upload));
 
-        // PR 분석 수행
+        // 2) PR 분석 수행
         PrAnalysisResponse result = prAnalysisService.analyze(
                 project.getOwner().getLogin(),
                 project.getName(),
                 prNumber
         );
 
-        // 리뷰 텍스트 합치기
+        // 3) 파일별 리뷰 전체 합치기
         String combinedReviews = result.getFiles().stream()
                 .map(PrAnalysisResponse.FileAnalysis::getReview)
-                .reduce("", (a, b) -> a + "\n\n" + b);
+                .reduce("", (a, b) -> a + "\n\n" + b)
+                .trim();
 
-        run.complete(combinedReviews.trim());
+        // 4) 전체 요약 리뷰
+        String summary = result.getSummaryReview();
+
+        // 5) 저장
+        run.complete(combinedReviews, summary);
         analysisRunRepository.save(run);
 
         upload.complete();
