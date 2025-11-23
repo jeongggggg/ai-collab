@@ -13,4 +13,5 @@ import java.util.List;
 public class LLMReviewRequest {
     private String filename;
     private List<String> diff;
+    private String fullCode;
 }

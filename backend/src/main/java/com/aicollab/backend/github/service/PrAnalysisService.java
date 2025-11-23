@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -21,19 +22,17 @@ public class PrAnalysisService {
 
     public PrAnalysisResponse analyze(String owner, String repo, int prNumber) {
 
-        // 1) PR 파일 목록 가져오기
         List<PullRequestFileResponse> files = githubService.getPullRequestFiles(owner, repo, prNumber);
         List<PrAnalysisResponse.FileAnalysis> analysisList = new ArrayList<>();
 
-        for(PullRequestFileResponse file : files) {
+        for (PullRequestFileResponse file : files) {
 
-            // patch 없는 파일 스킵
+            // diff 없는 경우 스킵
             if (file.getPatch() == null) continue;
 
-            // 2) diff 파싱
             var parsed = diffParser.parse(file.getPatch());
 
-            // DiffChange → String 변환
+            // diff → string 변환
             List<String> diffLines = parsed.stream()
                     .map(dc -> switch (dc.getType()) {
                         case "added" -> "+" + dc.getContent();
@@ -42,16 +41,24 @@ public class PrAnalysisService {
                     })
                     .toList();
 
-            // LLM 요청 DTO
+            // 파일 전체 조회
+            var content = githubService.getFileContent(owner, repo, file.getFilename(), file.getSha());
+
+            String fullCode = "";
+
+            if (content.getEncodedContent() != null) {
+                fullCode = new String(Base64.getDecoder().decode(content.getEncodedContent()));
+            }
+
+            // GPT 요청 DTO
             LLMReviewRequest request = LLMReviewRequest.builder()
                     .filename(file.getFilename())
                     .diff(diffLines)
+                    .fullCode(fullCode)
                     .build();
 
-            // 3) OpenAI 리뷰 생성
             String review = llmReviewService.generateReview(request).getReview();
 
-            // 4) 파일별 분석 저장
             analysisList.add(
                     PrAnalysisResponse.FileAnalysis.builder()
                             .filename(file.getFilename())
@@ -59,7 +66,6 @@ public class PrAnalysisService {
                             .build()
             );
         }
-        // 5) 최종 응답 생성
         return PrAnalysisResponse.of(prNumber, analysisList);
     }
 }

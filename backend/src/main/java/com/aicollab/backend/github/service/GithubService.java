@@ -1,8 +1,8 @@
 package com.aicollab.backend.github.service;
 
+import com.aicollab.backend.infrastructure.github.GitHubClient;
 import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
-import com.aicollab.backend.infrastructure.github.GitHubClient;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
 import com.aicollab.backend.infrastructure.github.parser.DiffChange;
 import com.aicollab.backend.infrastructure.github.parser.DiffParser;
@@ -46,7 +46,7 @@ public class GithubService {
         }
     }
 
-    // 파일 원본 조회
+    // 파일 전체 조회
     public GithubFileContentResponse getFileContent(String owner, String repo, String path, String sha) {
         var response = gitHubClient.getFileContent(owner, repo, path, sha);
         try {
@@ -61,19 +61,16 @@ public class GithubService {
         return diffParser.parse(patch);
     }
 
-    // commit SHA 로 PR 번호 자동 조회
+    // commit → 포함된 PR 번호 자동 조회
     public Integer getPrNumberByCommit(String owner, String repo, String sha) {
         var response = gitHubClient.getPrByCommit(owner, repo, sha);
-
         try {
             List<PullRequestResponse> result = objectMapper.readValue(
                     response.getBody(),
                     new TypeReference<List<PullRequestResponse>>() {}
             );
-
-            if (result.isEmpty()) return null; // PR이 없으면 null
-            return result.get(0).getNumber(); // 여러 개면 첫 번째 PR 기준
-
+            if (result.isEmpty()) return null;
+            return result.get(0).getNumber();
         } catch (Exception e) {
             throw new RuntimeException("Failed to find PR for commit");
         }
