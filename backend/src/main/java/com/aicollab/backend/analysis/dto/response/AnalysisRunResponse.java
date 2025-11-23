@@ -12,12 +12,14 @@ public class AnalysisRunResponse {
     private Long id;
     private AnalysisStatus status;
     private String review;
+    private String summaryReview;
 
     public static AnalysisRunResponse from(AnalysisRun run) {
         return AnalysisRunResponse.builder()
                 .id(run.getId())
                 .status(run.getStatus())
                 .review(run.getReview())
+                .summaryReview(run.getSummaryReview())
                 .build();
     }
 }

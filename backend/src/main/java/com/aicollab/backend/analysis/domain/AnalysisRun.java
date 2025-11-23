@@ -25,7 +25,11 @@ public class AnalysisRun {
 
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String review;
+    private String review;   // 파일별 상세 리뷰 전체
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String summaryReview;  // PR 전체 요약 리뷰
 
     private LocalDateTime createdAt;
 
@@ -37,8 +41,9 @@ public class AnalysisRun {
                 .build();
     }
 
-    public void complete(String review) {
+    public void complete(String review, String summary) {
         this.status = AnalysisStatus.COMPLETED;
         this.review = review;
+        this.summaryReview = summary;
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 public class PrAnalysisResponse {
 
     private int prNumber;
+    private String summaryReview;
     private List<FileAnalysis> files;
 
     @Getter
@@ -19,9 +20,10 @@ public class PrAnalysisResponse {
         private String review;
     }
 
-    public static PrAnalysisResponse of(int prNumber, List<FileAnalysis> files) {
+    public static PrAnalysisResponse of(int prNumber, String summaryReview, List<FileAnalysis> files) {
         return PrAnalysisResponse.builder()
                 .prNumber(prNumber)
+                .summaryReview(summaryReview)
                 .files(files)
                 .build();
     }

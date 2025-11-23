@@ -26,7 +26,10 @@ public class PullRequestFileResponse {
     @JsonProperty("raw_url")
     private String rawUrl;
 
+    @JsonProperty("sha")
+    private String sha;
+
     @JsonProperty("patch")
-    private String patch; // diff 내용
+    private String patch;
 
 }

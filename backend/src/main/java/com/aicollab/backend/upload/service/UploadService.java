@@ -2,6 +2,7 @@ package com.aicollab.backend.upload.service;
 
 import com.aicollab.backend.analysis.domain.AnalysisRun;
 import com.aicollab.backend.analysis.repository.AnalysisRunRepository;
+import com.aicollab.backend.github.service.GithubService;
 import com.aicollab.backend.github.service.PrAnalysisService;
 import com.aicollab.backend.infrastructure.github.GithubRestClient;
 import com.aicollab.backend.project.domain.Project;
@@ -16,6 +17,7 @@ import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.aicollab.backend.github.dto.response.PrAnalysisResponse;
 
 import java.util.List;
 
@@ -29,30 +31,40 @@ public class UploadService {
     private final UserRepository userRepository;
 
     private final GithubRestClient githubRestClient;
+    private final GithubService githubService;
+
     private final PrAnalysisService prAnalysisService;
     private final AnalysisRunRepository analysisRunRepository;
 
-    // 업로드 생성 (owner만 가능)
+    // 업로드 생성
     public Upload create(Long projectId, Long userId, UploadCreateRequest req) {
 
-        // 프로젝트 확인
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
-        // 사용자 확인
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // 프로젝트 소유자 검증
         if (!project.getOwner().getId().equals(owner.getId())) {
             throw new IllegalArgumentException("User is not owner of this project");
         }
 
-        // commit SHA 유효성 검증
+        // commit SHA 검증
         try {
-            githubRestClient.getCommit(project.getOwner().getLogin(), project.getName(), req.getCommitSha());
+            githubRestClient.getCommit(owner.getLogin(), project.getName(), req.getCommitSha());
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid commit SHA");
+        }
+
+        // PR 번호 자동 조회
+        Integer prNumber = githubService.getPrNumberByCommit(
+                owner.getLogin(),
+                project.getName(),
+                req.getCommitSha()
+        );
+
+        if (prNumber == null) {
+            throw new IllegalArgumentException("No Pull Request found for given commit");
         }
 
         // 업로드 생성
@@ -64,8 +76,8 @@ public class UploadService {
 
         Upload saved = uploadRepository.save(upload);
 
-        // 자동 분석 실행
-        runAnalysis(project, saved);
+        // 자동 분석
+        runAnalysis(project, saved, prNumber);
 
         return saved;
     }
@@ -89,37 +101,33 @@ public class UploadService {
         return UploadDetailResponse.from(upload, runs);
     }
 
-    // 자동 분석 수행
-    private void runAnalysis(Project project, Upload upload) {
+    // 자동 분석 실행
+    private void runAnalysis(Project project, Upload upload, int prNumber) {
 
-        // 1) 분석 실행 로그 생성 (PENDING)
+        // 1) 분석 실행 로그 생성
         AnalysisRun run = analysisRunRepository.save(AnalysisRun.createPending(upload));
 
-        // 2) PR 번호 추출
-        int prNumber = extractPrNumber(upload.getCommitSha());
-
-        // 3) PR 분석 실행
-        var result = prAnalysisService.analyze(
+        // 2) PR 분석 수행
+        PrAnalysisResponse result = prAnalysisService.analyze(
                 project.getOwner().getLogin(),
                 project.getName(),
                 prNumber
         );
 
-        // 4) 분석 완료 처리
-        run.complete(result.toString());
+        // 3) 파일별 리뷰 전체 합치기
+        String combinedReviews = result.getFiles().stream()
+                .map(PrAnalysisResponse.FileAnalysis::getReview)
+                .reduce("", (a, b) -> a + "\n\n" + b)
+                .trim();
+
+        // 4) 전체 요약 리뷰
+        String summary = result.getSummaryReview();
+
+        // 5) 저장
+        run.complete(combinedReviews, summary);
         analysisRunRepository.save(run);
 
-        // 5) 업로드 상태도 완료 처리
         upload.complete();
         uploadRepository.save(upload);
-    }
-
-    // commit SHA -> PR 번호 추출 (임시)
-    private int extractPrNumber(String sha) {
-        try {
-            return Integer.parseInt(sha.trim());
-        } catch (Exception e) {
-            return 1;
-        }
     }
 }
