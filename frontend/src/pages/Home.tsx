@@ -1,23 +1,16 @@
-import { useEffect, useState } from "react";
-import { api } from "../api/client";
+import { useAuthStore } from "../store/authStore";
 
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
+  const { user, logout, isLoading } = useAuthStore();
 
-  useEffect(() => {
-    api.get("/api/auth/me")
-      .then(res => setUser(res.data))
-      .catch(() => {});
-  }, []);
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!user) return <a href="/login">Login</a>;
 
   return (
     <div>
-      <h1>Home</h1>
-      {user ? (
-        <p>Welcome, {user.login}</p>
-      ) : (
-        <a href="/login">Go to Login</a>
-      )}
+      <p>Welcome, {user.login}</p>
+      <button onClick={logout}>Logout</button>
     </div>
   );
 }
