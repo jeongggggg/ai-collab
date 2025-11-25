@@ -1,7 +1,8 @@
 import './styles/globals.scss';
+import TestConnection from "./pages/TestConnection";
 
 function App() {
-  return <div>AI Collab Frontend Ready</div>;
+  return <TestConnection />;
 }
 
 export default App;
