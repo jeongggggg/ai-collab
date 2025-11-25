@@ -5,7 +5,12 @@ export default function Home() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (!user) return <a href="/login">Login</a>;
+  if (!user)
+    return (
+      <div>
+        <a href="/login">Login</a>
+      </div>
+    );
 
   return (
     <div>

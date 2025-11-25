@@ -10,7 +10,9 @@ export default function Login() {
 
   const loginWithGithub = () => {
     window.location.href =
-      `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=read:user user:email`;
+        `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}` +
+        `&redirect_uri=${REDIRECT_URI}` +
+        `&scope=read:user user:email`;
   };
 
   return (
