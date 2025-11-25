@@ -18,26 +18,28 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     // Github 인증 전체 로직
-    public AuthResponse login(String code){
-        // 1) access token 요청
-        String accessToken = oauthClient.requestAccessToken(code);
+    public AuthResponse login(String code) {
 
-        // 2) Github 유저 조회
-        GithubUserResponse githubUser = oauthClient.requestUserInfo(accessToken);
+        // 1) GitHub Access Token 요청
+        String githubAccessToken = oauthClient.requestAccessToken(code);
+
+        // 2) GitHub 유저 정보 요청
+        GithubUserResponse githubUser =
+                oauthClient.requestUserInfo(githubAccessToken);
 
         String email = (githubUser.getEmail() == null || githubUser.getEmail().isBlank())
-            ? githubUser.getLogin() + "@users.noreply.github.com"
-            : githubUser.getEmail();
+                ? githubUser.getLogin() + "@users.noreply.github.com"
+                : githubUser.getEmail();
 
-        // 3) 기존 유저 조회 or 신규 생성
+        // 3) DB 사용자 조회 or 신규 생성
         User user = userRepository.findByGithubId(githubUser.getId())
-                .map(existing -> updateExistingUser(existing, githubUser, email))
-                .orElseGet(() -> createNewUser(githubUser, email));
+                .map(existing -> updateExistingUser(existing, githubUser, email, githubAccessToken))
+                .orElseGet(() -> createNewUser(githubUser, email, githubAccessToken));
 
-        // 4) JWT (임시)
+        // 4) JWT 발급
         String jwt = jwtTokenProvider.createAccessToken(user.getId(), user.getLogin());
 
-        // 5) 응답
+        // 5) AuthResponse 반환
         return AuthResponse.of(
                 jwt,
                 user.getId(),
@@ -47,25 +49,31 @@ public class AuthService {
         );
     }
 
-    private User updateExistingUser(User user, GithubUserResponse github, String email) {
-        user.updateFromGithub(
-                github.getName(),
-                email,
-                github.getAvatarUrl()
-        );
-
+    private User updateExistingUser(
+            User user,
+            GithubUserResponse github,
+            String email,
+            String githubAccessToken
+    ) {
+        user.updateFromGithub(github.getName(), email, github.getAvatarUrl());
+        user.updateGithubAccessToken(githubAccessToken);
         user.updateLastLogin();
         return userRepository.save(user);
     }
 
-    private User createNewUser(GithubUserResponse github, String email){
+    private User createNewUser(
+            GithubUserResponse github,
+            String email,
+            String githubAccessToken
+    ) {
         User newUser = User.builder()
                 .githubId(github.getId())
                 .login(github.getLogin())
                 .name(github.getName())
                 .email(email)
                 .avatarUrl(github.getAvatarUrl())
-                .role(UserRole.USER)   // ENUM 사용
+                .githubAccessToken(githubAccessToken)
+                .role(UserRole.USER)
                 .build();
 
         return userRepository.save(newUser);
