@@ -1,11 +1,16 @@
 package com.aicollab.backend.github.controller;
 
+import com.aicollab.backend.auth.security.UserPrincipal;
+import com.aicollab.backend.github.dto.response.GithubRepoResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
 import com.aicollab.backend.github.service.GithubService;
 import com.aicollab.backend.global.response.ApiResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
+import com.aicollab.backend.user.domain.User;
+import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +21,7 @@ import java.util.List;
 public class GithubController {
 
     private final GithubService githubService;
+    private final UserRepository userRepository;
 
     @GetMapping("/prs")
     public ApiResponse<List<PullRequestResponse>> getPullRequests(
@@ -46,4 +52,19 @@ public class GithubController {
         return ApiResponse.success(githubService.getFileContent(owner, repo, path, sha));
     }
 
+    @GetMapping("/repos")
+    public ApiResponse<List<GithubRepoResponse>> getRepos(
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        User user = userRepository.findById(principal.getId())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        if (user.getGithubAccessToken() == null) {
+            throw new IllegalStateException("GitHub access token not found");
+        }
+
+        return ApiResponse.success(
+                githubService.getRepos(user.getGithubAccessToken())
+        );
+    }
 }

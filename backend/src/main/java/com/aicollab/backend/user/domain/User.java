@@ -41,6 +41,13 @@ public class User {
     private LocalDateTime updatedAt;
     private LocalDateTime lastLoginAt;
 
+    @Column(name = "github_access_token")
+    private String githubAccessToken;
+
+    public void updateGithubAccessToken(String token) {
+        this.githubAccessToken = token;
+    }
+
     @PrePersist
     public void onCreate(){
         this.createdAt = LocalDateTime.now();

@@ -1,6 +1,8 @@
 package com.aicollab.backend.github.service;
 
+import com.aicollab.backend.github.dto.response.GithubRepoResponse;
 import com.aicollab.backend.infrastructure.github.GitHubClient;
+import com.aicollab.backend.infrastructure.github.GithubRestClient;
 import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
 import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
@@ -20,6 +22,7 @@ public class GithubService {
 
     private final GitHubClient gitHubClient;
     private final DiffParser diffParser;
+    private final GithubRestClient githubRestClient;
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -74,5 +77,9 @@ public class GithubService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to find PR for commit");
         }
+    }
+
+    public List<GithubRepoResponse> getRepos(String accessToken) {
+        return githubRestClient.getRepos(accessToken);
     }
 }
