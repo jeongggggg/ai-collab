@@ -22,6 +22,8 @@ public class ProjectService {
                 .name(req.getName())
                 .description(req.getDescription())
                 .owner(owner)
+                .repoOwner(req.getRepoOwner())
+                .repoName(req.getRepoName())
                 .build();
 
         return projectRepository.save(project);
@@ -47,6 +49,8 @@ public class ProjectService {
                 .id(p.getId())
                 .name(p.getName())
                 .description(p.getDescription())
+                .repoOwner(p.getRepoOwner())
+                .repoName(p.getRepoName())
                 .owner(
                         ProjectResponse.OwnerInfo.builder()
                                 .id(p.getOwner().getId())

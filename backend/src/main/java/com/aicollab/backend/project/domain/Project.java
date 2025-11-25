@@ -29,6 +29,12 @@ public class Project {
     private User owner;
 
     @Column(nullable = false)
+    private String repoOwner;
+
+    @Column(nullable = false)
+    private String repoName;
+
+    @Column(nullable = false)
     private LocalDateTime createAt;
 
     @PrePersist

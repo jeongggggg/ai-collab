@@ -6,8 +6,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GithubRepoResponse {
-    private Long id;
-    private String name;
-    private boolean isPrivate;
-    private String htmlUrl;
+    public long id;
+    public String name;
+    public String full_name;
+    public Owner owner;
+
+    public static class Owner {
+        public String login;
+    }
 }
