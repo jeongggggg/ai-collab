@@ -1,11 +1,15 @@
 import { Outlet } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import GlobalLoader from "../components/GlobalLoader";
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
 
   return (
     <div style={{ padding: "20px" }}>
+      {/* Global Loading Banner */}
+      <GlobalLoader />
+
       {/* Header */}
       <header
         style={{
@@ -17,7 +21,7 @@ export default function AppLayout() {
           paddingBottom: "10px",
         }}
       >
-        <h2>AI Collab</h2>
+        <h2 style={{ margin: 0 }}>AI Collab</h2>
 
         {user && (
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -31,12 +35,20 @@ export default function AppLayout() {
               }}
             />
             <span>{user.login}</span>
-            <button onClick={logout}>Logout</button>
+            <button
+              onClick={logout}
+              style={{
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
+            >
+              Logout
+            </button>
           </div>
         )}
       </header>
 
-      {/* Content */}
+      {/* 페이지 콘텐츠 */}
       <Outlet />
     </div>
   );
