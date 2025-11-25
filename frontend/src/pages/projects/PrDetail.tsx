@@ -1,85 +1,118 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/client";
-import { useParams, useNavigate } from "react-router-dom";
-import "../../styles/prdetail.scss";
+import { useParams } from "react-router-dom";
+import "../../styles/PrDetail.scss";
 
-interface PrInfo {
-  number: number;
-  title: string;
-  state: string;
-}
-
-interface PrFile {
+interface FileChange {
   filename: string;
-  status: string;
   additions: number;
   deletions: number;
-  changes: number;
+  status: string;
+}
+
+interface PrReviewFile {
+  filename: string;
+  review: string;
+}
+
+interface PrReviewResult {
+  summaryReview: string;
+  combinedReviews: string;
+  files: PrReviewFile[];
 }
 
 export default function PrDetail() {
   const { projectId, prNumber } = useParams();
-  const navigate = useNavigate();
+  const [changedFiles, setChangedFiles] = useState<FileChange[]>([]);
+  const [repoOwner, setRepoOwner] = useState("");
+  const [repoName, setRepoName] = useState("");
 
-  const [project, setProject] = useState<any>(null);
-  const [pr, setPr] = useState<PrInfo | null>(null);
-  const [files, setFiles] = useState<PrFile[]>([]);
+  const [review, setReview] = useState<PrReviewResult | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 1) 프로젝트 정보 + 파일 리스트 불러오기
   useEffect(() => {
     if (!projectId || !prNumber) return;
 
-    // 1) 프로젝트 상세 조회 → repoOwner, repoName 가져오기
     api
       .get(`/api/projects/${projectId}`)
       .then((res) => {
         const p = res.data.data;
-        setProject(p);
+        setRepoOwner(p.repoOwner);
+        setRepoName(p.repoName);
 
-        // 2) PR 정보 + 파일 목록 조회
         return api.get(
           `/api/github/prs/${prNumber}/files?owner=${p.repoOwner}&repo=${p.repoName}`
         );
       })
       .then((res) => {
-        setFiles(res.data.data);
+        setChangedFiles(res.data.data);
       })
-      .catch((err) => {
-        console.error("❌ Failed to load PR files:", err);
-      })
-      .finally(() => setLoading(false));
+      .catch((err) => console.error("❌ Failed to load PR files:", err));
   }, [projectId, prNumber]);
 
-  if (loading) return <div className="loading">Loading...</div>;
+  // 2) PR 분석 자동 실행
+  useEffect(() => {
+    if (!repoOwner || !repoName) return;
+
+    setLoading(true);
+
+    api
+      .post(
+        `/api/github/prs/${projectId}/${prNumber}/review?owner=${repoOwner}&repo=${repoName}`
+      )
+      .then((res) => {
+        setReview(res.data.data);
+      })
+      .catch((err) => console.error("❌ Failed to generate review:", err))
+      .finally(() => setLoading(false));
+  }, [repoOwner, repoName]);
 
   return (
     <div className="pr-detail-container">
       <h2>Pull Request #{prNumber}</h2>
 
-      <h3>Files Changed</h3>
+      <section>
+        <h3>Changed Files</h3>
 
-      {files.length === 0 && (
-        <div className="no-files">No files found in this PR.</div>
+        {changedFiles.map((file) => (
+          <div key={file.filename} className="file-item">
+            <div className="file-name">📄 {file.filename}</div>
+            <div className="file-meta">
+              <span className="add">+{file.additions}</span>
+              <span className="del">-{file.deletions}</span>
+              <span className="status">{file.status}</span>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <hr />
+
+      {loading && (
+        <div className="loading">
+          <span>🔍 코드를 분석 중입니다 잠시만 기다려주세요...</span>
+        </div>
       )}
 
-      <ul className="file-list">
-        {files.map((file) => (
-          <li
-            key={file.filename}
-            className="file-item"
-            onClick={() =>
-              navigate(`/projects/${projectId}/prs/${prNumber}/files/${encodeURIComponent(file.filename)}`)
-            }
-          >
-            <div className="file-name">{file.filename}</div>
-            <div className="file-meta">
-              <span>{file.status}</span>
-              <span>+{file.additions}</span>
-              <span>-{file.deletions}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {!loading && review && (
+        <>
+          <section>
+            <h3>PR 전체 Review</h3>
+            <pre className="summary-block">{review.summaryReview}</pre>
+          </section>
+
+          <section>
+            <h3>변경 파일별 Reviews</h3>
+            {review.files.map((f) => (
+              <div key={f.filename} className="file-review-card">
+                <h4>{f.filename}</h4>
+                <pre className="review-block">{f.review}</pre>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
     </div>
   );
 }

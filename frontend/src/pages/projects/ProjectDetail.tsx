@@ -3,7 +3,6 @@ import { api } from "../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../styles/ProjectDetail.scss";
 
-// 프로젝트 정보 타입
 interface Project {
   id: number;
   name: string;
@@ -12,7 +11,6 @@ interface Project {
   repoName: string;
 }
 
-// PR 타입
 interface PullRequest {
   number: number;
   title: string;
@@ -30,7 +28,6 @@ export default function ProjectDetail() {
   const [prs, setPrs] = useState<PullRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 프로젝트 정보 + PR 목록 조회
   useEffect(() => {
     if (!id) return;
 
@@ -38,35 +35,23 @@ export default function ProjectDetail() {
       .get(`/api/projects/${id}`)
       .then((res) => {
         const data = res.data.data;
-        console.log("📌 Project Detail:", data);
-
         setProject(data);
 
-        // repoOwner / repoName 존재하는지 확인
-        if (!data.repoOwner || !data.repoName) {
-          console.error("❌ repoOwner 또는 repoName 없음:", data);
-          return null;
-        }
+        if (!data.repoOwner || !data.repoName) return null;
 
-        // PR 목록 조회
         return api.get(
           `/api/github/prs?owner=${data.repoOwner}&repo=${data.repoName}`
         );
       })
       .then((res) => {
-        if (!res) return; // 위에서 null일 때 방지
-
-        console.log("📌 PR LIST:", res.data.data);
-        setPrs(res.data.data || []);
+        if (res) setPrs(res.data.data || []);
       })
-      .catch((err) => {
-        console.error("❌ 프로젝트 or PR 조회 실패:", err);
-      })
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="loading">Loading...</div>;
-  if (!project) return <div className="loading">Project not found.</div>;
+  if (loading) return <div>Loading...</div>;
+  if (!project) return <div>Project Not Found</div>;
 
   return (
     <div className="project-detail-container">
@@ -75,9 +60,7 @@ export default function ProjectDetail() {
 
       <h3>Pull Requests</h3>
 
-      {prs.length === 0 && (
-        <div className="no-pr">No pull requests found for this repository.</div>
-      )}
+      {prs.length === 0 && <div>No Pull Requests found.</div>}
 
       <ul className="pr-list">
         {prs.map((pr) => (
@@ -87,7 +70,7 @@ export default function ProjectDetail() {
             onClick={() => navigate(`/projects/${id}/prs/${pr.number}`)}
           >
             <div className="pr-title">
-              #{pr.number} — {pr.title}
+              #{pr.number} - {pr.title}
             </div>
             <div className="pr-meta">
               <span>Author: {pr.user?.login}</span>
