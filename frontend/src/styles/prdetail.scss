@@ -1,0 +1,58 @@
+.pr-detail-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  color: #eee;
+
+  h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .file-section {
+    margin-top: 30px;
+
+    h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #ccc;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+  }
+
+  .file-item {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+
+    .file-name {
+      font-weight: bold;
+      color: #4ca3ff;
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+
+    pre {
+      background: #111;
+      overflow-x: auto;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 10px;
+      border: 1px solid #222;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .added {
+      color: #3ddc84;
+    }
+
+    .removed {
+      color: #ff5f5f;
+    }
+  }
+}

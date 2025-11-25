@@ -10,6 +10,11 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./layouts/AppLayout";
 
+import ProjectCreate from "./pages/projects/ProjectCreate";
+import ProjectDetail from "./pages/projects/ProjectDetail";
+
+import PrDetail from "./pages/projects/PrDetail";
+
 function App() {
   const fetchMe = useAuthStore((state) => state.fetchMe);
 
@@ -41,6 +46,31 @@ function App() {
 
       <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+
+      <Route path="/projects/new" element={
+        <ProtectedRoute>
+          <ProjectCreate />
+        </ProtectedRoute>
+      } />
+
+      <Route
+        path="/projects/:id"
+        element={
+          <ProtectedRoute>
+            <ProjectDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/projects/:projectId/prs/:prNumber"
+        element={
+          <ProtectedRoute>
+            <PrDetail />
+          </ProtectedRoute>
+        }
+      />
+
     </Routes>
   );
 }
