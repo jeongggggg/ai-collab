@@ -1,3 +1,4 @@
+import "../styles/common-loading.scss";
 import { useUIStore } from "../store/uiStore";
 
 export default function GlobalLoader() {
@@ -6,18 +7,9 @@ export default function GlobalLoader() {
   if (!loading) return null;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        width: "100%",
-        background: "rgba(0,0,0,0.05)",
-        padding: "10px",
-        textAlign: "center",
-        zIndex: 999,
-      }}
-    >
-      Loading...
+    <div className="fullscreen-loading">
+      <div className="spinner"></div>
+      <div className="text">Loading...</div>
     </div>
   );
 }

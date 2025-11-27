@@ -12,7 +12,6 @@ import AppLayout from "./layouts/AppLayout";
 
 import ProjectCreate from "./pages/projects/ProjectCreate";
 import ProjectDetail from "./pages/projects/ProjectDetail";
-
 import PrDetail from "./pages/projects/PrDetail";
 
 function App() {
@@ -24,6 +23,8 @@ function App() {
 
   return (
     <Routes>
+
+      {/* AppLayout 아래: 헤더 + 레이아웃이 필요한 모든 페이지 */}
       <Route element={<AppLayout />}>
         <Route
           path="/"
@@ -42,35 +43,38 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/projects/new"
+          element={
+            <ProtectedRoute>
+              <ProjectCreate />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/projects/:id"
+          element={
+            <ProtectedRoute>
+              <ProjectDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/projects/:projectId/prs/:prNumber"
+          element={
+            <ProtectedRoute>
+              <PrDetail />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
+      {/* Layout 없이 표시되는 페이지 */}
       <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
-
-      <Route path="/projects/new" element={
-        <ProtectedRoute>
-          <ProjectCreate />
-        </ProtectedRoute>
-      } />
-
-      <Route
-        path="/projects/:id"
-        element={
-          <ProtectedRoute>
-            <ProjectDetail />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/projects/:projectId/prs/:prNumber"
-        element={
-          <ProtectedRoute>
-            <PrDetail />
-          </ProtectedRoute>
-        }
-      />
-
     </Routes>
   );
 }

@@ -50,17 +50,37 @@ export default function ProjectDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (!project) return <div>Project Not Found</div>;
+  if (loading)
+    return (
+      <div className="fullscreen-loading">
+        <div className="spinner" />
+        <div className="text">Loading project...</div>
+      </div>
+    );
+
+  if (!project) return <div className="not-found">Project Not Found</div>;
 
   return (
     <div className="project-detail-container">
-      <h2>{project.name}</h2>
-      <p className="description">{project.description}</p>
+      <div className="project-header">
+        <h2>{project.name}</h2>
+        <p className="description">{project.description}</p>
 
-      <h3>Pull Requests</h3>
+        <a
+          className="repo-link"
+          href={`https://github.com/${project.repoOwner}/${project.repoName}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🔗 View on GitHub
+        </a>
+      </div>
 
-      {prs.length === 0 && <div>No Pull Requests found.</div>}
+      <h3 className="section-title">Pull Requests</h3>
+
+      {prs.length === 0 && (
+        <div className="empty-text">No Pull Requests found.</div>
+      )}
 
       <ul className="pr-list">
         {prs.map((pr) => (
@@ -70,11 +90,13 @@ export default function ProjectDetail() {
             onClick={() => navigate(`/projects/${id}/prs/${pr.number}`)}
           >
             <div className="pr-title">
-              #{pr.number} - {pr.title}
+              <span className="pr-number">#{pr.number}</span>
+              <span>{pr.title}</span>
             </div>
+
             <div className="pr-meta">
               <span>Author: {pr.user?.login}</span>
-              <span>Status: {pr.state}</span>
+              <span className={`pr-state ${pr.state}`}>{pr.state}</span>
             </div>
           </li>
         ))}

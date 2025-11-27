@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/authStore";
+import "../styles/common-loading.scss";
 
 export default function AuthCallback() {
   const fetchMe = useAuthStore((state) => state.fetchMe);
@@ -15,7 +16,8 @@ export default function AuthCallback() {
     }
     sessionStorage.setItem("oauth_code", code);
 
-    api.post("/api/auth/exchange", null, { params: { code } })
+    api
+      .post("/api/auth/exchange", null, { params: { code } })
       .then(async (res) => {
         const { accessToken } = res.data;
         localStorage.setItem("accessToken", accessToken);
@@ -23,12 +25,16 @@ export default function AuthCallback() {
         await fetchMe();
         window.location.href = "/";
       })
-      .catch((err) => {
-        console.error("exchange error:", err);
+      .catch(() => {
         alert("Login failed");
         window.location.href = "/login";
       });
   }, []);
 
-  return <div>Logging in...</div>;
+  return (
+    <div className="fullscreen-loading">
+      <div className="spinner"></div>
+      <div className="text">GitHub 로그인 처리 중...</div>
+    </div>
+  );
 }
