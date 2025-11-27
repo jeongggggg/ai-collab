@@ -6,4 +6,6 @@ import lombok.Getter;
 public class ProjectCreateRequest {
     private String name;
     private String description;
+    private String repoOwner;
+    private String repoName;
 }

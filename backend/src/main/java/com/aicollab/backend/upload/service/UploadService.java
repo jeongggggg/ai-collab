@@ -50,8 +50,15 @@ public class UploadService {
         }
 
         // commit SHA 검증
+        String accessToken = owner.getGithubAccessToken();
+
         try {
-            githubRestClient.getCommit(owner.getLogin(), project.getName(), req.getCommitSha());
+            githubRestClient.getCommit(
+                    owner.getLogin(),
+                    project.getName(),
+                    req.getCommitSha(),
+                    accessToken
+            );
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid commit SHA");
         }

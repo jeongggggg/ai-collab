@@ -1,12 +1,11 @@
 package com.aicollab.backend.infrastructure.github.dto.response;
 
-import com.aicollab.backend.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PullRequestResponse {
 
     private int number;
@@ -18,15 +17,23 @@ public class PullRequestResponse {
 
     private GithubUser user;
 
+    private Head head;
+
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GithubUser {
-
         private String login;
 
         @JsonProperty("avatar_url")
         private String avatarUrl;
 
         private Long id;
+    }
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Head {
+        private String sha;
+        private String ref;
     }
 }

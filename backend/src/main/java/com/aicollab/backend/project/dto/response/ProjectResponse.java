@@ -1,6 +1,7 @@
 package com.aicollab.backend.project.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 
 @Getter
@@ -10,9 +11,12 @@ public class ProjectResponse {
     private String name;
     private String description;
 
+    private String repoOwner;
+    private String repoName;
+
     private OwnerInfo owner;
 
-    @Getter
+    @Data
     @Builder
     public static class OwnerInfo {
         private Long id;
