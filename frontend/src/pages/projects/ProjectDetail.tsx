@@ -65,6 +65,15 @@ export default function ProjectDetail() {
       <div className="project-header">
         <h2>{project.name}</h2>
         <p className="description">{project.description}</p>
+
+        <a
+          className="repo-link"
+          href={`https://github.com/${project.repoOwner}/${project.repoName}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🔗 View on GitHub
+        </a>
       </div>
 
       <h3 className="section-title">Pull Requests</h3>
