@@ -88,8 +88,6 @@ public class LLMReviewService {
                 - 아래 템플릿을 STRICT하게 준수
 
                 ---------------------
-                ✨ 파일명: %s
-                ---------------------
 
                 ## 🔀 DIFF (변경 사항)
                 %s
