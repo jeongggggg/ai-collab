@@ -1,0 +1,58 @@
+.home-container {
+  max-width: 900px;
+  margin: 40px auto;
+  color: white;
+  padding: 20px;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    font-size: 26px;
+  }
+
+  .new-btn {
+    background: #4a6cff;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+}
+
+.project-list {
+  margin-top: 20px;
+}
+
+.project-item {
+  background: #1a1a1a;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background: #222;
+  }
+
+  .project-name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .project-desc {
+    color: #aaa;
+    margin-top: 5px;
+  }
+
+  .project-repo {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #6e8bff;
+  }
+}
