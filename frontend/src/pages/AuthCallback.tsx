@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { api } from "../api/client";
 import { useAuthStore } from "../store/authStore";
-import "../styles/auth-callback.scss";
+import "../styles/common-loading.scss";
 
 export default function AuthCallback() {
   const fetchMe = useAuthStore((state) => state.fetchMe);
@@ -10,6 +10,7 @@ export default function AuthCallback() {
     const code = new URLSearchParams(window.location.search).get("code");
     if (!code) return;
 
+    // 중복 요청 방지
     if (sessionStorage.getItem("oauth_code") === code) {
       return;
     }
@@ -31,9 +32,9 @@ export default function AuthCallback() {
   }, []);
 
   return (
-    <div className="auth-callback-container">
-      <div className="spinner" />
-      <p className="text">GitHub 로그인 처리 중…</p>
+    <div className="fullscreen-loading">
+      <div className="spinner"></div>
+      <div className="text">GitHub 로그인 처리 중...</div>
     </div>
   );
 }

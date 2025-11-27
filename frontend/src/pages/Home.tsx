@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.scss";
+import "../styles/common-loading.scss";
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -17,7 +19,13 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="home-loading">Loading projects...</div>;
+ if (loading)
+  return (
+    <div className="fullscreen-loading">
+      <div className="spinner"></div>
+      <div className="text">Loading...</div>
+    </div>
+  );
 
   return (
     <div className="home-container">
