@@ -1,4 +1,5 @@
-![alt text](readme-header.png)
+![alt text](./docs/readme-header.png)
+
 
 <p align="center"> <img src="https://img.shields.io/badge/AI_Collab-000000?style=for-the-badge&logo=github&logoColor=white" /> <img src="https://img.shields.io/badge/Java_17-007396?style=for-the-badge&logo=openjdk&logoColor=white" /> <img src="https://img.shields.io/badge/React_18-61DAFB?style=for-the-badge&logo=react&logoColor=black" /> <img src="https://img.shields.io/badge/OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white" /> </p>
 
