@@ -2,9 +2,9 @@ package com.aicollab.backend.upload.service;
 
 import com.aicollab.backend.analysis.domain.AnalysisRun;
 import com.aicollab.backend.analysis.repository.AnalysisRunRepository;
-import com.aicollab.backend.github.service.GithubService;
+import com.aicollab.backend.github.service.GithubIntegrationService;
 import com.aicollab.backend.github.service.PrAnalysisService;
-import com.aicollab.backend.infrastructure.github.GithubRestClient;
+import com.aicollab.backend.github.client.GithubHttpClient;
 import com.aicollab.backend.project.domain.Project;
 import com.aicollab.backend.project.repository.ProjectRepository;
 import com.aicollab.backend.upload.domain.Upload;
@@ -30,8 +30,8 @@ public class UploadService {
     private final UploadRepository uploadRepository;
     private final UserRepository userRepository;
 
-    private final GithubRestClient githubRestClient;
-    private final GithubService githubService;
+    private final GithubHttpClient githubRestClient;
+    private final GithubIntegrationService githubService;
 
     private final PrAnalysisService prAnalysisService;
     private final AnalysisRunRepository analysisRunRepository;

@@ -1,4 +1,4 @@
-package com.aicollab.backend.analysis.service;
+package com.aicollab.backend.analysis.processor;
 
 import com.aicollab.backend.analysis.dto.request.LLMReviewRequest;
 import com.aicollab.backend.analysis.dto.response.LLMReviewResponse;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LLMReviewService {
+public class LLMReviewProcessor {
 
     private final OpenAIClient openAIClient;
 

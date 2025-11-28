@@ -13,7 +13,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuthRestClient {
+public class GithubOAuthClient {
     @Value("${github.client-id}")
     private String clientId;
 

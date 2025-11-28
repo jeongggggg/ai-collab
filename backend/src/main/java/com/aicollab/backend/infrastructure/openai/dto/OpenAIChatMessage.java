@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class OpenAIMessage {
+public class OpenAIChatMessage {
     private String role;
     private String content; // 프롬프트 내용
 }

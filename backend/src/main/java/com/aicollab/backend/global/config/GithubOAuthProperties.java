@@ -1,4 +1,4 @@
-package com.aicollab.backend.auth.config;
+package com.aicollab.backend.global.config;
 
 import lombok.Getter;
 import lombok.Setter;

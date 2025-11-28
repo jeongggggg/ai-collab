@@ -1,4 +1,4 @@
-package com.aicollab.backend.infrastructure.github;
+package com.aicollab.backend.github.client;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

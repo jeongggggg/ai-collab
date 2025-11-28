@@ -1,6 +1,6 @@
 package com.aicollab.backend.infrastructure.openai.dto.request;
 
-import com.aicollab.backend.infrastructure.openai.dto.OpenAIMessage;
+import com.aicollab.backend.infrastructure.openai.dto.OpenAIChatMessage;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 public class OpenAIChatRequest {
     private String model;
-    private List<OpenAIMessage> messages;
+    private List<OpenAIChatMessage> messages;
     private double temperature;
 
     public static OpenAIChatRequest of(String prompt) {
@@ -18,7 +18,7 @@ public class OpenAIChatRequest {
                 .model("gpt-4o-mini")
                 .temperature(0.2)
                 .messages(List.of(
-                        new OpenAIMessage("user", prompt)
+                        new OpenAIChatMessage("user", prompt)
                 ))
                 .build();
     }

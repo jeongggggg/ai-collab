@@ -1,11 +1,11 @@
 package com.aicollab.backend.github.service;
 
 import com.aicollab.backend.analysis.dto.request.LLMReviewRequest;
-import com.aicollab.backend.analysis.service.LLMReviewService;
+import com.aicollab.backend.analysis.processor.LLMReviewProcessor;
 import com.aicollab.backend.github.dto.response.PrAnalysisResponse;
-import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
-import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
-import com.aicollab.backend.infrastructure.github.parser.DiffParser;
+import com.aicollab.backend.github.dto.response.GithubFileContentResponse;
+import com.aicollab.backend.github.dto.response.PullRequestFileResponse;
+import com.aicollab.backend.github.parser.DiffParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PrAnalysisService {
 
-    private final GithubService githubService;
+    private final GithubIntegrationService githubService;
     private final DiffParser diffParser;
-    private final LLMReviewService llmReviewService;
+    private final LLMReviewProcessor llmReviewService;
 
     public PrAnalysisResponse analyze(String owner, String repo, int prNumber) {
 

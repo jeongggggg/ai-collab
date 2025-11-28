@@ -1,4 +1,4 @@
-package com.aicollab.backend.infrastructure.github;
+package com.aicollab.backend.github.client;
 
 import com.aicollab.backend.github.dto.response.GithubRepoResponse;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GithubRestClient {
+public class GithubHttpClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
