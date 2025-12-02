@@ -2,12 +2,12 @@ package com.aicollab.backend.github.controller;
 
 import com.aicollab.backend.auth.security.UserPrincipal;
 import com.aicollab.backend.github.dto.response.GithubRepoResponse;
-import com.aicollab.backend.github.service.GithubService;
+import com.aicollab.backend.github.service.GithubIntegrationService;
 import com.aicollab.backend.global.response.ApiResponse;
-import com.aicollab.backend.infrastructure.github.GithubRestClient;
-import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
-import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
-import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
+import com.aicollab.backend.github.client.GithubHttpClient;
+import com.aicollab.backend.github.dto.response.GithubFileContentResponse;
+import com.aicollab.backend.github.dto.response.PullRequestFileResponse;
+import com.aicollab.backend.github.dto.response.PullRequestResponse;
 import com.aicollab.backend.user.domain.User;
 import com.aicollab.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ import java.util.List;
 @RequestMapping("/api/github")
 public class GithubController {
 
-    private final GithubService githubService;
-    private final GithubRestClient githubRestClient;
+    private final GithubIntegrationService githubIntegrationService;
+    private final GithubHttpClient githubRestClient;
     private final UserRepository userRepository;
 
     @GetMapping("/prs")
@@ -30,7 +30,7 @@ public class GithubController {
             @RequestParam String owner,
             @RequestParam String repo
     ) {
-        return ApiResponse.success(githubService.getPullRequests(owner, repo));
+        return ApiResponse.success(githubIntegrationService.getPullRequests(owner, repo));
     }
 
     @GetMapping("/prs/{prNumber}/files")
@@ -40,7 +40,7 @@ public class GithubController {
             @PathVariable int prNumber
     ) {
         return ApiResponse.success(
-                githubService.getPullRequestFiles(owner, repo, prNumber)
+                githubIntegrationService.getPullRequestFiles(owner, repo, prNumber)
         );
     }
 
@@ -51,7 +51,7 @@ public class GithubController {
             @RequestParam String path,
             @RequestParam String sha
     ) {
-        return ApiResponse.success(githubService.getFileContent(owner, repo, path, sha));
+        return ApiResponse.success(githubIntegrationService.getFileContent(owner, repo, path, sha));
     }
 
     @GetMapping("/repos")
@@ -66,7 +66,7 @@ public class GithubController {
         }
 
         return ApiResponse.success(
-                githubService.getRepos(user.getGithubAccessToken())
+                githubIntegrationService.getRepos(user.getGithubAccessToken())
         );
     }
 

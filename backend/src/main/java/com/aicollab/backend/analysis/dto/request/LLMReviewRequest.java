@@ -1,6 +1,5 @@
 package com.aicollab.backend.analysis.dto.request;
 
-import com.aicollab.backend.infrastructure.github.parser.DiffChange;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

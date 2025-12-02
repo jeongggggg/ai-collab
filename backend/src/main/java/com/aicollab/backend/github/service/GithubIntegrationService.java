@@ -1,13 +1,13 @@
 package com.aicollab.backend.github.service;
 
 import com.aicollab.backend.github.dto.response.GithubRepoResponse;
-import com.aicollab.backend.infrastructure.github.GitHubClient;
-import com.aicollab.backend.infrastructure.github.GithubRestClient;
-import com.aicollab.backend.infrastructure.github.dto.response.GithubFileContentResponse;
-import com.aicollab.backend.infrastructure.github.dto.response.PullRequestFileResponse;
-import com.aicollab.backend.infrastructure.github.dto.response.PullRequestResponse;
-import com.aicollab.backend.infrastructure.github.parser.DiffChange;
-import com.aicollab.backend.infrastructure.github.parser.DiffParser;
+import com.aicollab.backend.github.client.GitHubClient;
+import com.aicollab.backend.github.client.GithubHttpClient;
+import com.aicollab.backend.github.dto.response.GithubFileContentResponse;
+import com.aicollab.backend.github.dto.response.PullRequestFileResponse;
+import com.aicollab.backend.github.dto.response.PullRequestResponse;
+import com.aicollab.backend.github.parser.DiffChange;
+import com.aicollab.backend.github.parser.DiffParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,11 +18,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GithubService {
+public class GithubIntegrationService {
 
     private final GitHubClient gitHubClient;
     private final DiffParser diffParser;
-    private final GithubRestClient githubRestClient;
+    private final GithubHttpClient githubRestClient;
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final OAuthRestClient oauthClient;
+    private final GithubOAuthClient oauthClient;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 

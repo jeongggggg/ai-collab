@@ -1,7 +1,7 @@
 package com.aicollab.backend.analysis.controller;
 
 import com.aicollab.backend.analysis.dto.response.AnalysisRunResponse;
-import com.aicollab.backend.analysis.service.AnalysisRunQueryService;
+import com.aicollab.backend.analysis.service.AnalysisRunService;
 import com.aicollab.backend.auth.security.UserPrincipal;
 import com.aicollab.backend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/analysis-runs/")
 public class AnalysisRunController {
 
-    private final AnalysisRunQueryService analysisRunQueryService;
+    private final AnalysisRunService analysisRunService;
 
     @GetMapping("/{runId}")
     public ApiResponse<AnalysisRunResponse> getAnalysisRun(
@@ -24,7 +24,7 @@ public class AnalysisRunController {
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         AnalysisRunResponse response =
-                analysisRunQueryService.getById(runId, principal.getId());
+                analysisRunService.getById(runId, principal.getId());
 
         return ApiResponse.success(response);
     }

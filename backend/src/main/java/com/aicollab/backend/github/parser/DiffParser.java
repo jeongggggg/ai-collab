@@ -1,4 +1,4 @@
-package com.aicollab.backend.infrastructure.github.parser;
+package com.aicollab.backend.github.parser;
 
 import org.springframework.stereotype.Component;
 

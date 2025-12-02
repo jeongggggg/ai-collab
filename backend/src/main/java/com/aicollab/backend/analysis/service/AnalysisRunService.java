@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AnalysisRunQueryService {
+public class AnalysisRunService {
 
     private final AnalysisRunRepository analysisRunRepository;
 

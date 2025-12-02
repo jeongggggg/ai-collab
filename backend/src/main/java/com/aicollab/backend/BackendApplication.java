@@ -1,6 +1,6 @@
 package com.aicollab.backend;
 
-import com.aicollab.backend.auth.config.GithubOAuthProperties;
+import com.aicollab.backend.global.config.GithubOAuthProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
