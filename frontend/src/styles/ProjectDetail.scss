@@ -6,21 +6,29 @@
 }
 
 .project-header {
-  margin-bottom: 30px;
+  margin-bottom: 55px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .project-info{
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
 
   h2 {
     font-size: 24px;
     font-weight: 600;
     color: #222;
+    margin-bottom: 0;
   }
 
   .description {
     font-size: 14px;
     color: #666;
     line-height: 1.5;
+    max-width: 50%;
   }
 }
 
@@ -123,6 +131,29 @@
 
   &:hover {
     background: #000;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.delete-btn {
+  padding: 8px 12px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  display: block;
+  margin: 20px 0 0 auto;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background: #c0392b;
   }
 }
 
