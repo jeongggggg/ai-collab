@@ -4,6 +4,7 @@ import com.aicollab.backend.project.domain.Project;
 import com.aicollab.backend.project.dto.request.ProjectCreateRequest;
 import com.aicollab.backend.project.dto.response.ProjectResponse;
 import com.aicollab.backend.project.repository.ProjectRepository;
+import com.aicollab.backend.upload.repository.UploadRepository;
 import com.aicollab.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final UploadRepository uploadRepository;
 
     // 프로젝트 생성
     public Project create(ProjectCreateRequest req, User owner) {
@@ -66,6 +68,11 @@ public class ProjectService {
 
         if(!project.getOwner().getId().equals(requester.getId())) {
             throw new IllegalArgumentException("Only the owner can delete this project");
+        }
+
+        long uploadCount = uploadRepository.countByProjectId(id);
+        if (uploadCount > 0) {
+            throw new IllegalStateException("프로젝트에 연결된 업로드 내역이 있어 삭제할 수 없습니다.");
         }
 
         projectRepository.delete(project);

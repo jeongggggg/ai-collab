@@ -50,6 +50,25 @@ export default function ProjectDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
+    const deleteProject = async () => {
+    const ok = window.confirm("정말 삭제하시겠습니까?");
+    if (!ok) return;
+
+    try {
+      await api.delete(`/api/projects/${id}`);
+      alert("프로젝트가 삭제되었습니다.");
+      navigate("/");
+    } catch (err: any) {
+        console.error(err);
+
+        const message =
+          err.response?.data?.message ||
+          "삭제에 실패했습니다.";
+
+        alert(message);
+      }
+  };
+
   if (loading)
     return (
       <div className="fullscreen-loading">
@@ -63,8 +82,10 @@ export default function ProjectDetail() {
   return (
     <div className="project-detail-container">
       <div className="project-header">
-        <h2>{project.name}</h2>
-        <p className="description">{project.description}</p>
+        <div className="project-info">
+          <h2>{project.name}</h2>
+          <p className="description">{project.description}</p>
+        </div>
 
         <a
           className="repo-link"
@@ -101,6 +122,7 @@ export default function ProjectDetail() {
           </li>
         ))}
       </ul>
+      <button className="delete-btn" onClick={deleteProject}>Delete</button>
     </div>
   );
 }
